@@ -5,7 +5,7 @@
 
 <style>
     body{
-        background-color: palegreen;
+        background-color: white;
         font-family: 'Comic Sans MS';
         overflow: auto;
     }
@@ -41,6 +41,8 @@ else
 {
     <h1>@SelectedPokemon.Name</h1>
 
+    <img src="@SelectedPokemon.Sprites.FrontDefault" />
+
     if(SelectedPokemonType1 is not null)
     {
         <h1>@SelectedPokemonType1.Type.Name</h1>
@@ -50,6 +52,10 @@ else
     {
         <h1>@SelectedPokemonType2.Type.Name</h1>
     }
+
+    <button @onclick="@(() => NextPokemon())">
+        Next
+    </button>
 }
 
 @code {
@@ -58,6 +64,7 @@ else
     private Pokemon? SelectedPokemon;
     private PokemonType? SelectedPokemonType1;
     private PokemonType? SelectedPokemonType2;
+
     private static Random rnd = new Random();
 
     private const int maxPokemonId = 1025;
