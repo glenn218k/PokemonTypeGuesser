@@ -6,7 +6,7 @@
 <style>
     body{
         background-color: white;
-        font-family: 'Comic Sans MS';
+        font-family: Arial;
         overflow: auto;
     }
 
@@ -26,32 +26,47 @@
     }
 
     .buttonClassEven:hover {
-        background-color: yellow;
+        background-color: darkslategray;
         color: black;
+    }
+
+    .imgClass {
+        width: 33%;
+    }
+
+    .typeClass {
+        width: 100px;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        display: table-cell;
+        font-weight: bold;
     }
 </style>
 
 @if (SelectedPokemon is null)
 {
-    <button @onclick="@(() => NextPokemon())">
-        Start
-    </button>
+    <h1>Loading...</h1>
 }
 else
 {
-    <h1>@SelectedPokemon.Name</h1>
+    <img class="imgClass" src="@SelectedPokemonImageUrl" />
+    
+    <h1>@SelectedPokemonName</h1>
 
-    <img src="@SelectedPokemon.Sprites.FrontDefault" />
+    <div style="display: table;">
+        <div style="display: table-row">
+            @if (SelectedPokemonType1 is not null)
+            {
+                <div class="typeClass" style="@GetTypeStyle(SelectedPokemonType1)">@SelectedPokemonType1</div>
+            }
 
-    if(SelectedPokemonType1 is not null)
-    {
-        <h1>@SelectedPokemonType1.Type.Name</h1>
-    }
-
-    if (SelectedPokemonType2 is not null)
-    {
-        <h1>@SelectedPokemonType2.Type.Name</h1>
-    }
+            @if (SelectedPokemonType2 is not null)
+            {
+                <div class="typeClass" style="@GetTypeStyle(SelectedPokemonType2)">@SelectedPokemonType2</div>
+            }
+        </div>
+    </div>
 
     <button @onclick="@(() => NextPokemon())">
         Next
@@ -62,8 +77,34 @@ else
     private static PokeApiClient pokeApiClient = new PokeApiClient();
 
     private Pokemon? SelectedPokemon;
-    private PokemonType? SelectedPokemonType1;
-    private PokemonType? SelectedPokemonType2;
+    private string? SelectedPokemonName;
+    private string? SelectedPokemonImageUrl;
+    private string? SelectedPokemonType1;
+    private string? SelectedPokemonType2;
+
+    private List<string> GuessedTypes = [];
+
+    private static Dictionary<string, string> TypeColorDictionary = new ()
+        {
+            { "FAIRY", "pink" },
+            { "FIGHTING", "red" },
+            { "FLYING", "lightskyblue" },
+            { "POISON", "purple" },
+            { "GROUND", "saddlebrown" },
+            { "ROCK", "brown" },
+            { "BUG", "lawngreen" },
+            { "GHOST", "mediumpurple" },
+            { "STEEL", "lightgray" },
+            { "FIRE", "orange" },
+            { "WATER", "royalblue" },
+            { "GRASS", "green" },
+            { "ELECTRIC", "yellow" },
+            { "PSYCHIC", "magenta" },
+            { "ICE", "cyan" },
+            { "DRAGON", "gold" },
+            { "DARK", "darkslategray" },
+            { "NORMAL", "ivory" },
+        };
 
     private static Random rnd = new Random();
 
@@ -74,13 +115,43 @@ else
         var pokemonId = rnd.Next(1, maxPokemonId);
         var pokemon = await pokeApiClient.GetResourceAsync<Pokemon>(pokemonId);
 
+        if (pokemon is null)
+        {
+            // If the pokemon is null, we try again to get a valid pokemon.
+            await NextPokemon();
+
+            return;
+        }
+
+        UpdateSelectedPokemon(pokemon);
+    }
+
+    private void UpdateSelectedPokemon(Pokemon pokemon)
+    {
         SelectedPokemon = pokemon;
-        SelectedPokemonType1 = pokemon.Types.Count > 0 ? pokemon.Types[0] : null;
-        SelectedPokemonType2 = pokemon.Types.Count > 1 ? pokemon.Types[1] : null;
+        SelectedPokemonName = $"#{pokemon.Id:0000} {pokemon.Name.ToUpperInvariant()}";
+        SelectedPokemonImageUrl = pokemon.Sprites.Other.OfficialArtwork.FrontDefault;
+        SelectedPokemonType1 = pokemon.Types.Count > 0 ? pokemon.Types[0].Type.Name.ToUpperInvariant() : null;
+        SelectedPokemonType2 = pokemon.Types.Count > 1 ? pokemon.Types[1].Type.Name.ToUpperInvariant() : null;
+    }
+
+    private string GetTypeStyle(string type)
+    {
+        if (GuessedTypes.Contains(type))
+        {
+            return $"background-color: {TypeColorDictionary[type]}";
+        }
+
+        return "background-color: White";
     }
 
     protected override async Task OnInitializedAsync()
     {
+        foreach(var type in TypeColorDictionary.Keys)
+        {
+            GuessedTypes.Add(type);
+        }
+
         await Init();
     }
 
