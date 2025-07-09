@@ -12,7 +12,7 @@
 
     .imgClass {
         width: 33%;
-        max-width: 50%;
+        max-width: 100%;
     }
 
     .typeClass {
@@ -22,6 +22,7 @@
         text-align: center;
         display: table-cell;
         font-weight: bold;
+        border: 1px solid black;
     }
 
     .div-table {
@@ -39,6 +40,8 @@
         float: left; /* fix for  buggy browsers */
         display: table-column;
         width: 200px;
+        border: 1px solid black;
+        font-weight: bold;
     }
 </style>
 
@@ -267,7 +270,17 @@ else
     {
         if (GuessedTypes.Contains(type))
         {
-            return "background-color: White";
+            var color = string.Empty;
+            if((SelectedPokemonType1 is not null && SelectedPokemonType1.Equals(type, StringComparison.OrdinalIgnoreCase)) ||
+                (SelectedPokemonType2 is not null && SelectedPokemonType2.Equals(type, StringComparison.OrdinalIgnoreCase)))
+            {
+                color = "color: lawngreen";
+            }
+            else
+            {
+                 color = "color: red";
+            }
+            return "background-color: white; " + color; 
         }
 
         return GetTypeStyle(type);
