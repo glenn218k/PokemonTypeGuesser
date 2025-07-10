@@ -137,9 +137,15 @@ else
         </div>
         <div class="types">
             <div class="typesContainer">
-                <div class="type1" style="@GetTypeStylePotentiallyHidden(SelectedPokemonType1)">@GetTypeNamePotentiallyHidden(SelectedPokemonType1, true)</div>
+                @if (SelectedPokemonType1 is not null)
+                {
+                    <div class="type1" style="@GetTypeStylePotentiallyHidden(SelectedPokemonType1)">@GetTypeNamePotentiallyHidden(SelectedPokemonType1, true)</div>
+                }
                 
-                <div class="type2" style="@GetTypeStylePotentiallyHidden(SelectedPokemonType2)">@GetTypeNamePotentiallyHidden(SelectedPokemonType2, false)</div>
+                @if(SelectedPokemonType2 is not null)
+                {
+                    <div class="type2" style="@GetTypeStylePotentiallyHidden(SelectedPokemonType2)">@GetTypeNamePotentiallyHidden(SelectedPokemonType2, false)</div>
+                }
             </div>
         </div>
         <div class="guesses">
@@ -210,24 +216,24 @@ else
 
     private static Dictionary<string, string> TypeColorDictionary = new ()
         {
-            { "FAIRY", "pink" },
-            { "FIGHTING", "red" },
-            { "FLYING", "lightskyblue" },
-            { "POISON", "purple" },
-            { "GROUND", "saddlebrown" },
-            { "ROCK", "brown" },
-            { "BUG", "lawngreen" },
-            { "GHOST", "mediumpurple" },
-            { "STEEL", "lightgray" },
-            { "FIRE", "orange" },
-            { "WATER", "royalblue" },
-            { "GRASS", "green" },
-            { "ELECTRIC", "yellow" },
-            { "PSYCHIC", "magenta" },
-            { "ICE", "cyan" },
-            { "DRAGON", "gold" },
-            { "DARK", "darkslategray" },
-            { "NORMAL", "ivory" },
+            { "BUG", "#91A119" },
+            { "DARK", "#624D4E" },
+            { "DRAGON", "#5060E1" },
+            { "ELECTRIC", "#FAC000" },
+            { "FAIRY", "#EF70EF" },
+            { "FIGHTING", "#FF8000" },
+            { "FIRE", "#E62829" },
+            { "FLYING", "#81B9EF" },
+            { "GHOST", "#704170" },
+            { "GRASS", "#3FA129" },
+            { "GROUND", "#915121" },
+            { "ICE", "#3DCEF3" },
+            { "NORMAL", "#9FA19F" },
+            { "POISON", "#9141CB" },
+            { "PSYCHIC", "#EF4179" },
+            { "ROCK", "#AFA981" },
+            { "STEEL", "#60A1B8" },
+            { "WATER", "#2980EF" },
         };
 
     private static Random rnd = new Random();
@@ -312,13 +318,8 @@ else
         return $"background-color: {TypeColorDictionary[type]}";
     }
 
-    private string GetTypeStylePotentiallyHidden(string? type)
+    private string GetTypeStylePotentiallyHidden(string type)
     {
-        if (string.IsNullOrWhiteSpace(type))
-        {
-            return string.Empty;
-        }
-
         if (GuessedTypes.Contains(type))
         {
             return GetTypeStyle(type);
@@ -327,13 +328,8 @@ else
         return "background-color: White";
     }
 
-    private string GetTypeNamePotentiallyHidden(string? typeName, bool isType1)
+    private string GetTypeNamePotentiallyHidden(string typeName, bool isType1)
     {
-        if (string.IsNullOrWhiteSpace(typeName))
-        {
-            return string.Empty;
-        }
-
         if (GuessedTypes.Contains(typeName))
         {
             return typeName;
