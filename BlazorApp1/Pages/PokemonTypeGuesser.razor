@@ -4,6 +4,77 @@
 <PageTitle>Pokemon Type Guesser</PageTitle>
 
 <style>
+    .typesContainer {
+        display: grid;
+        grid-template-areas:
+            "type1 type2";
+        grid-template-columns: 1fr 1fr;
+    }
+
+        .typesContainer > div {
+            background-color: white;
+            align-items: center;
+            height: 40px;
+        }
+        
+            .typesContainer > div.type1 {
+                grid-area: type1;
+                line-height: 40px;
+                color: black;
+                text-align: center;
+                font-weight: bold;
+                max-width: 400px;
+            }
+
+            .typesContainer > div.type2 {
+                grid-area: type2;
+                color: black;
+                line-height: 40px;
+                text-align: center;
+                font-weight: bold;
+                max-width: 400px;
+            }
+
+    .container {
+        display: grid;
+        grid-template-areas:
+            "pic buttons"
+            "name name"
+            "types types"
+            "guesses guesses";
+        grid-template-columns: 3fr 1fr;
+        gap: 5px;
+        background-color: white;
+        padding: 5px;
+    }
+
+        .container > div {
+            background-color: white;
+            padding: 10px;
+        }
+
+            .container > div.pic {
+                grid-area: pic;
+                text-align: center;
+            }
+
+            .container > div.name {
+                grid-area: name;
+                text-align: center;
+            }
+
+            .container > div.buttons {
+                grid-area: buttons;
+            }
+
+            .container > div.types {
+                grid-area: types;
+            }
+
+            .container > div.guesses {
+                grid-area: guesses;
+            }
+
     body{
         background-color: white;
         font-family: Arial;
@@ -46,6 +117,11 @@
         font-weight: bold;
         padding: 5px;
     }
+
+    .buttonClass {
+        height: 100px;
+        width: 100px;
+    }
 </style>
 
 @if (SelectedPokemon is null)
@@ -54,66 +130,55 @@
 }
 else
 {
-    <img class="imgClass" src="@SelectedPokemonImageUrl" />
-
-    <p />
-
-    <h1>@SelectedPokemonName</h1>
-
-    <p />
-
-    <div style="display: table;">
-        <div style="display: table-row">
-            @if (SelectedPokemonType1 is not null)
-            {
-                <div class="typeClass" style="@GetTypeStylePotentiallyHidden(SelectedPokemonType1)">@GetTypeNamePotentiallyHidden(SelectedPokemonType1, true)</div>
-            }
-
-            <p />
-
-            @if (SelectedPokemonType2 is not null)
-            {
-                <div class="typeClass" style="@GetTypeStylePotentiallyHidden(SelectedPokemonType2)">@GetTypeNamePotentiallyHidden(SelectedPokemonType2, false)</div>
-            }
+    <div class="container">
+        <div class="pic">
+            <img src="@SelectedPokemonImageUrl" />
         </div>
-    </div>
-
-    <p />
-
-    <div class="div-table" style="max-width: 600px">
-        <div class="div-table-row">
-            <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("BUG")" onclick="@(() => GuessType("BUG"))">BUG</div>
-            <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("DARK")" onclick="@(() => GuessType("DARK"))">DARK</div>
-            <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("DRAGON")" onclick="@(() => GuessType("DRAGON"))">DRAGON</div>
-            <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("ELECTRIC")" onclick="@(() => GuessType("ELECTRIC"))">ELECTRIC</div>
-            <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("FAIRY")" onclick="@(() => GuessType("FAIRY"))">FAIRY</div>
-            <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("FIGHTING")" onclick="@(() => GuessType("FIGHTING"))">FIGHTING</div>
-            <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("FIRE")" onclick="@(() => GuessType("FIRE"))">FIRE</div>
-            <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("FLYING")" onclick="@(() => GuessType("FLYING"))">FLYING</div>
-            <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("GHOST")" onclick="@(() => GuessType("GHOST"))">GHOST</div>
-            <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("GRASS")" onclick="@(() => GuessType("GRASS"))">GRASS</div>
-            <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("GROUND")" onclick="@(() => GuessType("GROUND"))">GROUND</div>
-            <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("ICE")" onclick="@(() => GuessType("ICE"))">ICE</div>
-            <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("NORMAL")" onclick="@(() => GuessType("NORMAL"))">NORMAL</div>
-            <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("POISON")" onclick="@(() => GuessType("POISON"))">POISON</div>
-            <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("PSYCHIC")" onclick="@(() => GuessType("PSYCHIC"))">PSYCHIC</div>
-            <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("ROCK")" onclick="@(() => GuessType("ROCK"))">ROCK</div>
-            <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("STEEL")" onclick="@(() => GuessType("STEEL"))">STEEL</div>
-            <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("WATER")" onclick="@(() => GuessType("WATER"))">WATER</div>
+        <div class="name">
+            <h1>@SelectedPokemonName</h1>
         </div>
-    </div>
-
-    <p />
-
-    <div style="display: table;">
-        <div style="display: table-row">
-            <button @onclick="@(() => NextPokemon())">
-                Next
+        <div class="buttons">
+            <button class="buttonClass" disabled="@GetButtonDisabled(true)" @onclick="@(() => NextPokemon(false))">
+                Next ->
             </button>
 
-            <button @onclick="@(() => GiveUp())">
+            <br />
+            <br />
+
+            <button class="buttonClass" disabled="@GetButtonDisabled(false)" @onclick="@(() => GiveUp())">
                 Give Up
             </button>
+        </div>
+        <div class="types">
+            <div class="typesContainer">
+                <div class="type1" style="@GetTypeStylePotentiallyHidden(SelectedPokemonType1)">@GetTypeNamePotentiallyHidden(SelectedPokemonType1, true)</div>
+                
+                <div class="type2" style="@GetTypeStylePotentiallyHidden(SelectedPokemonType2)">@GetTypeNamePotentiallyHidden(SelectedPokemonType2, false)</div>
+            </div>
+        </div>
+        <div class="guesses">
+            <div class="div-table">
+                <div class="div-table-row">
+                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("BUG")" onclick="@(() => GuessType("BUG"))">BUG</div>
+                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("DARK")" onclick="@(() => GuessType("DARK"))">DARK</div>
+                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("DRAGON")" onclick="@(() => GuessType("DRAGON"))">DRAGON</div>
+                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("ELECTRIC")" onclick="@(() => GuessType("ELECTRIC"))">ELECTRIC</div>
+                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("FAIRY")" onclick="@(() => GuessType("FAIRY"))">FAIRY</div>
+                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("FIGHTING")" onclick="@(() => GuessType("FIGHTING"))">FIGHTING</div>
+                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("FIRE")" onclick="@(() => GuessType("FIRE"))">FIRE</div>
+                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("FLYING")" onclick="@(() => GuessType("FLYING"))">FLYING</div>
+                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("GHOST")" onclick="@(() => GuessType("GHOST"))">GHOST</div>
+                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("GRASS")" onclick="@(() => GuessType("GRASS"))">GRASS</div>
+                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("GROUND")" onclick="@(() => GuessType("GROUND"))">GROUND</div>
+                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("ICE")" onclick="@(() => GuessType("ICE"))">ICE</div>
+                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("NORMAL")" onclick="@(() => GuessType("NORMAL"))">NORMAL</div>
+                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("POISON")" onclick="@(() => GuessType("POISON"))">POISON</div>
+                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("PSYCHIC")" onclick="@(() => GuessType("PSYCHIC"))">PSYCHIC</div>
+                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("ROCK")" onclick="@(() => GuessType("ROCK"))">ROCK</div>
+                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("STEEL")" onclick="@(() => GuessType("STEEL"))">STEEL</div>
+                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("WATER")" onclick="@(() => GuessType("WATER"))">WATER</div>
+                </div>
+            </div>
         </div>
     </div>
 }
@@ -126,6 +191,11 @@ else
     private string? SelectedPokemonImageUrl;
     private string? SelectedPokemonType1;
     private string? SelectedPokemonType2;
+
+    private bool GetButtonDisabled(bool next)
+    {
+        return next != IsComplete();
+    }
 
     private bool IsComplete()
     {
@@ -178,12 +248,22 @@ else
 
     private const int maxPokemonId = 1025;
 
-    private async Task NextPokemon()
+    private bool _gettingNextPokemon = false;
+
+    private async Task NextPokemon(bool force)
     {
         if (!IsComplete())
         {
             return;
         }
+
+        if (_gettingNextPokemon && !force)
+        {
+            // If we are already getting the next pokemon, we do not do anything.
+            return;
+        }
+
+        _gettingNextPokemon = true;
 
         var pokemonId = rnd.Next(1, maxPokemonId);
         var pokemon = await pokeApiClient.GetResourceAsync<Pokemon>(pokemonId);
@@ -191,7 +271,7 @@ else
         if (pokemon is null)
         {
             // If the pokemon is null, we try again to get a valid pokemon.
-            await NextPokemon();
+            await NextPokemon(true);
 
             return;
         }
@@ -199,6 +279,8 @@ else
         GuessedTypes.Clear();
 
         UpdateSelectedPokemon(pokemon);
+
+        _gettingNextPokemon = false;
     }
 
     private void GiveUp()
@@ -244,8 +326,13 @@ else
         return $"background-color: {TypeColorDictionary[type]}";
     }
 
-    private string GetTypeStylePotentiallyHidden(string type)
+    private string GetTypeStylePotentiallyHidden(string? type)
     {
+        if (string.IsNullOrWhiteSpace(type))
+        {
+            return string.Empty;
+        }
+
         if (GuessedTypes.Contains(type))
         {
             return GetTypeStyle(type);
@@ -254,8 +341,13 @@ else
         return "background-color: White";
     }
 
-    private string GetTypeNamePotentiallyHidden(string typeName, bool isType1)
+    private string GetTypeNamePotentiallyHidden(string? typeName, bool isType1)
     {
+        if (string.IsNullOrWhiteSpace(typeName))
+        {
+            return string.Empty;
+        }
+
         if (GuessedTypes.Contains(typeName))
         {
             return typeName;
@@ -296,6 +388,6 @@ else
 
     private async Task Init()
     {
-        await NextPokemon();
+        await NextPokemon(false);
     }
 }
