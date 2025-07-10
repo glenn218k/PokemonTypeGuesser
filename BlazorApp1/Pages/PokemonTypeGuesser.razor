@@ -16,7 +16,7 @@
             align-items: center;
             height: 50px;
             line-height: 50px;
-            color: black;
+            color: white;
             text-align: center;
             border: 1px solid black;
             font-weight: bold;
@@ -98,6 +98,7 @@
         float: left; /* fix for  buggy browsers */
         display: table-column;
         width: 200px;
+        color: white;
         border: 1px solid black;
         font-weight: bold;
         height: 50px;
@@ -325,7 +326,7 @@ else
             return GetTypeStyle(type);
         }
 
-        return "background-color: White";
+        return "background-color: White; color: Black";
     }
 
     private string GetTypeNamePotentiallyHidden(string typeName, bool isType1)
