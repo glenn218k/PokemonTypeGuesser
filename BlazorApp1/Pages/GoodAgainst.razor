@@ -113,109 +113,91 @@
     }
 </style>
 
-@if (SelectedPokemon is null)
-{
-    <h1>Loading...</h1>
-}
-else
-{
-    <div class="container">
-        <div class="pic">
-            <img src="@SelectedPokemonImageUrl" />
-        </div>
-        <div class="name">
-            <h1>@SelectedPokemonName</h1>
-        </div>
-        <div class="buttons">
-            <button class="buttonClass" disabled="@GetButtonDisabled(true)" @onclick="@(() => NextPokemon(false))">
-                Next
-            </button>
+<div class="container">
+    <div class="pic">
+        @if (QuadDamageTypes?.Any() == true)
+        {
+            <div>4x damage from:</div>
+            @foreach (var quadType in QuadDamageTypes)
+            {
+                <div class="type" style="@GetTypeStyle(quadType)">@quadType</div>
+            }
+        }
 
-            <br />
-            <br />
-
-            <button class="buttonClass" disabled="@GetButtonDisabled(false)" @onclick="@(() => GiveUp())">
-                Give Up
-            </button>
-        </div>
-        <div class="types">
-            <div class="typesContainer">
-                @if (SelectedPokemonType1 is not null)
-                {
-                    <div class="type1" style="@GetTypeStylePotentiallyHidden(SelectedPokemonType1)">@GetTypeNamePotentiallyHidden(SelectedPokemonType1, true)</div>
-                }
+        @if (DoubleDamageTypes?.Any() == true)
+        {
+            <div>2x damage from:</div>
+            @foreach (var DoubType in DoubleDamageTypes)
+            {
+                <div class="type" style="@GetTypeStyle(DoubType)">@DoubType</div>
+            }
+        }
+    </div>
+    <div class="buttons">
+        <button class="buttonClass" disabled="@GetClearButtonDisabled()" @onclick="@(() => Clear())">
+            Clear
+        </button>
+    </div>
+    <div class="types">
+        <div class="typesContainer">
+            @if (SelectedPokemonType1 is not null)
+            {
+                <div class="type1" style="background-color:@TypeColorDictionary[@SelectedPokemonType1]">@SelectedPokemonType1</div>
+            }
                 
-                @if(SelectedPokemonType2 is not null)
-                {
-                    <div class="type2" style="@GetTypeStylePotentiallyHidden(SelectedPokemonType2)">@GetTypeNamePotentiallyHidden(SelectedPokemonType2, false)</div>
-                }
-            </div>
+            @if(SelectedPokemonType2 is not null)
+            {
+                <div class="type2" style="background-color:@TypeColorDictionary[@SelectedPokemonType2]">@SelectedPokemonType2</div>
+            }
         </div>
-        <div class="guesses">
-            <div class="div-table">
-                <div class="div-table-row">
-                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("BUG")" onclick="@(() => GuessType("BUG"))">BUG</div>
-                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("DARK")" onclick="@(() => GuessType("DARK"))">DARK</div>
-                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("DRAGON")" onclick="@(() => GuessType("DRAGON"))">DRAGON</div>
-                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("ELECTRIC")" onclick="@(() => GuessType("ELECTRIC"))">ELECTRIC</div>
-                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("FAIRY")" onclick="@(() => GuessType("FAIRY"))">FAIRY</div>
-                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("FIGHTING")" onclick="@(() => GuessType("FIGHTING"))">FIGHTING</div>
-                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("FIRE")" onclick="@(() => GuessType("FIRE"))">FIRE</div>
-                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("FLYING")" onclick="@(() => GuessType("FLYING"))">FLYING</div>
-                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("GHOST")" onclick="@(() => GuessType("GHOST"))">GHOST</div>
-                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("GRASS")" onclick="@(() => GuessType("GRASS"))">GRASS</div>
-                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("GROUND")" onclick="@(() => GuessType("GROUND"))">GROUND</div>
-                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("ICE")" onclick="@(() => GuessType("ICE"))">ICE</div>
-                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("NORMAL")" onclick="@(() => GuessType("NORMAL"))">NORMAL</div>
-                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("POISON")" onclick="@(() => GuessType("POISON"))">POISON</div>
-                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("PSYCHIC")" onclick="@(() => GuessType("PSYCHIC"))">PSYCHIC</div>
-                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("ROCK")" onclick="@(() => GuessType("ROCK"))">ROCK</div>
-                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("STEEL")" onclick="@(() => GuessType("STEEL"))">STEEL</div>
-                    <div class="div-table-col" align="center" style="@GetTypeStyleForGuessing("WATER")" onclick="@(() => GuessType("WATER"))">WATER</div>
-                </div>
+    </div>
+    <div class="guesses">
+        <div class="div-table">
+            <div class="div-table-row">
+                <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("BUG")" onclick="@(() => GuessType("BUG"))">BUG</div>
+                <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("DARK")" onclick="@(() => GuessType("DARK"))">DARK</div>
+                <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("DRAGON")" onclick="@(() => GuessType("DRAGON"))">DRAGON</div>
+                <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("ELECTRIC")" onclick="@(() => GuessType("ELECTRIC"))">ELECTRIC</div>
+                <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("FAIRY")" onclick="@(() => GuessType("FAIRY"))">FAIRY</div>
+                <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("FIGHTING")" onclick="@(() => GuessType("FIGHTING"))">FIGHTING</div>
+                <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("FIRE")" onclick="@(() => GuessType("FIRE"))">FIRE</div>
+                <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("FLYING")" onclick="@(() => GuessType("FLYING"))">FLYING</div>
+                <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("GHOST")" onclick="@(() => GuessType("GHOST"))">GHOST</div>
+                <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("GRASS")" onclick="@(() => GuessType("GRASS"))">GRASS</div>
+                <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("GROUND")" onclick="@(() => GuessType("GROUND"))">GROUND</div>
+                <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("ICE")" onclick="@(() => GuessType("ICE"))">ICE</div>
+                <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("NORMAL")" onclick="@(() => GuessType("NORMAL"))">NORMAL</div>
+                <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("POISON")" onclick="@(() => GuessType("POISON"))">POISON</div>
+                <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("PSYCHIC")" onclick="@(() => GuessType("PSYCHIC"))">PSYCHIC</div>
+                <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("ROCK")" onclick="@(() => GuessType("ROCK"))">ROCK</div>
+                <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("STEEL")" onclick="@(() => GuessType("STEEL"))">STEEL</div>
+                <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("WATER")" onclick="@(() => GuessType("WATER"))">WATER</div>
             </div>
         </div>
     </div>
-}
+</div>
 
 @code {
     private static PokeApiClient pokeApiClient = new PokeApiClient();
 
-    private Pokemon? SelectedPokemon;
-    private string? SelectedPokemonName;
-    private string? SelectedPokemonImageUrl;
     private string? SelectedPokemonType1;
     private string? SelectedPokemonType2;
 
-    private bool GetButtonDisabled(bool next)
+    private PokeApiNet.Type? SelectedPokemonActualType1;
+    private PokeApiNet.Type? SelectedPokemonActualType2;
+
+    private bool GetClearButtonDisabled()
     {
-        return next != IsComplete();
+        return SelectedPokemonType1 is null && SelectedPokemonType2 is null;
     }
 
-    private bool IsComplete()
+    private bool GetTypeButtonDisabled()
     {
-        if (SelectedPokemonType1 is not null)
-        {
-            bool twoIsGood = true;
-            if (SelectedPokemonType2 is not null)
-            {
-                twoIsGood = GuessedTypes.Contains(SelectedPokemonType2);
-            }
-
-            if (GuessedTypes.Contains(SelectedPokemonType1) && twoIsGood)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        return true;
+        return SelectedPokemonType1 is not null && SelectedPokemonType2 is not null;
     }
 
-    private List<string> GuessedTypes = [];
+    private List<string> DoubleDamageTypes = [];
+    private List<string> QuadDamageTypes = [];
 
     private static Dictionary<string, string> TypeColorDictionary = new ()
         {
@@ -245,74 +227,72 @@ else
 
     private bool _gettingNextPokemon = false;
 
-    private async Task NextPokemon(bool force)
+    private void Clear()
     {
-        if (!IsComplete())
-        {
-            return;
-        }
-
-        if (_gettingNextPokemon && !force)
-        {
-            // If we are already getting the next pokemon, we do not do anything.
-            return;
-        }
-
-        _gettingNextPokemon = true;
-
-        var pokemonId = rnd.Next(1, maxPokemonId);
-        var pokemon = await pokeApiClient.GetResourceAsync<Pokemon>(pokemonId);
-
-        if (pokemon is null)
-        {
-            // If the pokemon is null, we try again to get a valid pokemon.
-            await NextPokemon(true);
-
-            return;
-        }
-
-        GuessedTypes.Clear();
-
-        UpdateSelectedPokemon(pokemon);
-
-        _gettingNextPokemon = false;
+        SelectedPokemonActualType1 = null;
+        SelectedPokemonType1 = null;
+        SelectedPokemonActualType2 = null;
+        SelectedPokemonType2 = null;
+        DoubleDamageTypes.Clear();
+        QuadDamageTypes.Clear();
     }
 
-    private void GiveUp()
+    private async Task GuessType(string type)
     {
-        if (IsComplete())
+        if (SelectedPokemonActualType1 is null)
         {
-            return;
-        }
+            SelectedPokemonActualType1 = await pokeApiClient.GetResourceAsync<PokeApiNet.Type>(type);
 
-        foreach(var type in TypeColorDictionary.Keys)
-        {
-            if (!GuessedTypes.Contains(type))
+            if (SelectedPokemonActualType1 is not PokeApiNet.Type actualType)
             {
-                GuessedTypes.Add(type);
+                return;
+            }
+
+            SelectedPokemonType1 = type;
+
+            foreach (var typeName in actualType.DamageRelations.DoubleDamageFrom)
+            {
+                var upperName = typeName.Name.ToUpperInvariant();
+                DoubleDamageTypes.Add(upperName);
             }
         }
-    }   
-
-    private void UpdateSelectedPokemon(Pokemon pokemon)
-    {
-        SelectedPokemon = pokemon;
-        SelectedPokemonName = $"#{pokemon.Id:0000} {pokemon.Name.ToUpperInvariant()}";
-        SelectedPokemonImageUrl = pokemon.Sprites.Other.OfficialArtwork.FrontDefault;
-        SelectedPokemonType1 = pokemon.Types.Count > 0 ? pokemon.Types[0].Type.Name.ToUpperInvariant() : null;
-        SelectedPokemonType2 = pokemon.Types.Count > 1 ? pokemon.Types[1].Type.Name.ToUpperInvariant() : null;
-    }
-
-    private void GuessType(string type)
-    {
-        if (IsComplete())
+        else if (SelectedPokemonActualType2 is null)
         {
-            return;
-        }
+            SelectedPokemonActualType2 = await pokeApiClient.GetResourceAsync<PokeApiNet.Type>(type);
 
-        if (!GuessedTypes.Contains(type))
-        {
-            GuessedTypes.Add(type);
+            if (SelectedPokemonActualType2 is not PokeApiNet.Type actualType)
+            {
+                return;
+            }
+
+            SelectedPokemonType2 = type;
+
+            List<string> typeOneReducedDamageFrom = [.. SelectedPokemonActualType1.DamageRelations.HalfDamageFrom.Select(t => t.Name.ToUpperInvariant()), .. SelectedPokemonActualType1.DamageRelations.NoDamageFrom.Select(t => t.Name.ToUpperInvariant())];
+            List<string> typeTwoReducedDamageFrom = [.. actualType.DamageRelations.HalfDamageFrom.Select(t => t.Name.ToUpperInvariant()), .. actualType.DamageRelations.NoDamageFrom.Select(t => t.Name.ToUpperInvariant())];
+            List<string> typeTwoIncreasedDamageFrom = [.. actualType.DamageRelations.DoubleDamageFrom.Select(t => t.Name.ToUpperInvariant())];
+
+            foreach (var typeName in typeOneReducedDamageFrom)
+            {
+                typeTwoIncreasedDamageFrom.Remove(typeName);
+            }
+
+            foreach (var typeName in typeTwoReducedDamageFrom)
+            {
+                DoubleDamageTypes.Remove(typeName);
+            }
+
+            foreach (var typeName in typeTwoIncreasedDamageFrom)
+            {
+                if (DoubleDamageTypes.Contains(typeName))
+                {
+                    DoubleDamageTypes.Remove(typeName);
+                    QuadDamageTypes.Add(typeName);
+                }
+                else
+                {
+                    DoubleDamageTypes.Add(typeName);
+                }
+            }
         }
     }
 
@@ -321,58 +301,13 @@ else
         return $"background-color: {TypeColorDictionary[type]}";
     }
 
-    private string GetTypeStylePotentiallyHidden(string type)
-    {
-        if (GuessedTypes.Contains(type))
-        {
-            return GetTypeStyle(type);
-        }
-
-        return "background-color: White; color: Black";
-    }
-
-    private string GetTypeNamePotentiallyHidden(string typeName, bool isType1)
-    {
-        if (GuessedTypes.Contains(typeName))
-        {
-            return typeName;
-        }
-
-        if (isType1)
-        {
-            return "Type 1";
-        }
-
-        return "Type 2";
-    }
-
     private string GetTypeStyleForGuessing(string type)
     {
-        if (GuessedTypes.Contains(type))
+        if (GetTypeButtonDisabled())
         {
-            var color = string.Empty;
-            if((SelectedPokemonType1 is not null && SelectedPokemonType1.Equals(type, StringComparison.OrdinalIgnoreCase)) ||
-                (SelectedPokemonType2 is not null && SelectedPokemonType2.Equals(type, StringComparison.OrdinalIgnoreCase)))
-            {
-                color = "color: lawngreen";
-            }
-            else
-            {
-                 color = "color: red";
-            }
-            return "background-color: white; " + color; 
+            return "background-color: White; color: Black";
         }
 
         return GetTypeStyle(type);
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await Init();
-    }
-
-    private async Task Init()
-    {
-        await NextPokemon(false);
     }
 }
