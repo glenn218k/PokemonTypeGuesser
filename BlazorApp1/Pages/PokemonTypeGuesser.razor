@@ -180,8 +180,6 @@ else
 }
 
 @code {
-    private static PokeApiClient pokeApiClient = new PokeApiClient();
-
     private Pokemon? SelectedPokemon;
     private string? SelectedPokemonName;
     private string? SelectedPokemonImageUrl;
@@ -262,7 +260,7 @@ else
         _gettingNextPokemon = true;
 
         var pokemonId = rnd.Next(1, maxPokemonId);
-        var pokemon = await pokeApiClient.GetResourceAsync<Pokemon>(pokemonId);
+        var pokemon = await PokeApiClientHelper.PokeApiClient.GetResourceAsync<Pokemon>(pokemonId);
 
         if (pokemon is null)
         {

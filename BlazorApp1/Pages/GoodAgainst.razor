@@ -214,8 +214,6 @@
 </div>
 
 @code {
-    private static PokeApiClient pokeApiClient = new PokeApiClient();
-
     private string? SelectedPokemonType1;
     private string? SelectedPokemonType2;
 
@@ -279,7 +277,7 @@
     {
         if (SelectedPokemonActualType1 is null)
         {
-            SelectedPokemonActualType1 = await pokeApiClient.GetResourceAsync<PokeApiNet.Type>(type);
+            SelectedPokemonActualType1 = await PokeApiClientHelper.PokeApiClient.GetResourceAsync<PokeApiNet.Type>(type);
 
             if (SelectedPokemonActualType1 is not PokeApiNet.Type actualType)
             {
@@ -313,7 +311,7 @@
         }
         else if (SelectedPokemonActualType2 is null)
         {
-            SelectedPokemonActualType2 = await pokeApiClient.GetResourceAsync<PokeApiNet.Type>(type);
+            SelectedPokemonActualType2 = await PokeApiClientHelper.PokeApiClient.GetResourceAsync<PokeApiNet.Type>(type);
 
             if (SelectedPokemonActualType2 is not PokeApiNet.Type actualType)
             {
