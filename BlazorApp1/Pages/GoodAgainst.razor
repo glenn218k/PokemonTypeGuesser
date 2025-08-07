@@ -118,18 +118,54 @@
         @if (QuadDamageTypes?.Any() == true)
         {
             <div>4x damage from:</div>
-            @foreach (var quadType in QuadDamageTypes)
+            @foreach (var t in QuadDamageTypes)
             {
-                <div class="type" style="@GetTypeStyle(quadType)">@quadType</div>
+                <div class="type" style="@GetTypeStyle(t)">@t</div>
             }
         }
 
         @if (DoubleDamageTypes?.Any() == true)
         {
             <div>2x damage from:</div>
-            @foreach (var DoubType in DoubleDamageTypes)
+            @foreach (var t in DoubleDamageTypes)
             {
-                <div class="type" style="@GetTypeStyle(DoubType)">@DoubType</div>
+                <div class="type" style="@GetTypeStyle(t)">@t</div>
+            }
+        }
+
+        @if (RegDamageTypes?.Any() == true)
+        {
+            <div>1x damage from:</div>
+            @foreach (var t in RegDamageTypes)
+            {
+                <div class="type" style="@GetTypeStyle(t)">@t</div>
+            }
+        }
+
+        @if (HalfDamageTypes?.Any() == true)
+        {
+            <div>1/2 damage from:</div>
+            @foreach (var t in HalfDamageTypes)
+            {
+                <div class="type" style="@GetTypeStyle(t)">@t</div>
+            }
+        }
+
+        @if (QuartDamageTypes?.Any() == true)
+        {
+            <div>1/4 damage from:</div>
+            @foreach (var t in QuartDamageTypes)
+            {
+                <div class="type" style="@GetTypeStyle(t)">@t</div>
+            }
+        }
+
+        @if (ImmuneDamageTypes?.Any() == true)
+        {
+            <div>0x damage from:</div>
+            @foreach (var t in ImmuneDamageTypes)
+            {
+                <div class="type" style="@GetTypeStyle(t)">@t</div>
             }
         }
     </div>
@@ -196,8 +232,12 @@
         return SelectedPokemonType1 is not null && SelectedPokemonType2 is not null;
     }
 
-    private List<string> DoubleDamageTypes = [];
     private List<string> QuadDamageTypes = [];
+    private List<string> DoubleDamageTypes = [];
+    private List<string> RegDamageTypes = [];
+    private List<string> HalfDamageTypes = [];
+    private List<string> QuartDamageTypes = [];
+    private List<string> ImmuneDamageTypes = [];
 
     private static Dictionary<string, string> TypeColorDictionary = new ()
         {
@@ -221,20 +261,18 @@
             { "WATER", "#2980EF" },
         };
 
-    private static Random rnd = new Random();
-
-    private const int maxPokemonId = 1025;
-
-    private bool _gettingNextPokemon = false;
-
     private void Clear()
     {
         SelectedPokemonActualType1 = null;
         SelectedPokemonType1 = null;
         SelectedPokemonActualType2 = null;
         SelectedPokemonType2 = null;
-        DoubleDamageTypes.Clear();
         QuadDamageTypes.Clear();
+        DoubleDamageTypes.Clear();
+        RegDamageTypes.Clear();
+        HalfDamageTypes.Clear();
+        QuartDamageTypes.Clear();
+        ImmuneDamageTypes.Clear();
     }
 
     private async Task GuessType(string type)
@@ -250,9 +288,26 @@
 
             SelectedPokemonType1 = type;
 
+            RegDamageTypes.AddRange(TypeColorDictionary.Keys);
+
+            foreach (var typeName in actualType.DamageRelations.NoDamageFrom)
+            {
+                var upperName = typeName.Name.ToUpperInvariant();
+                RegDamageTypes.Remove(upperName);
+                ImmuneDamageTypes.Add(upperName);
+            }
+
+            foreach (var typeName in actualType.DamageRelations.HalfDamageFrom)
+            {
+                var upperName = typeName.Name.ToUpperInvariant();
+                RegDamageTypes.Remove(upperName);
+                HalfDamageTypes.Add(upperName);
+            }
+
             foreach (var typeName in actualType.DamageRelations.DoubleDamageFrom)
             {
                 var upperName = typeName.Name.ToUpperInvariant();
+                RegDamageTypes.Remove(upperName);
                 DoubleDamageTypes.Add(upperName);
             }
         }
@@ -267,30 +322,60 @@
 
             SelectedPokemonType2 = type;
 
-            List<string> typeOneReducedDamageFrom = [.. SelectedPokemonActualType1.DamageRelations.HalfDamageFrom.Select(t => t.Name.ToUpperInvariant()), .. SelectedPokemonActualType1.DamageRelations.NoDamageFrom.Select(t => t.Name.ToUpperInvariant())];
-            List<string> typeTwoReducedDamageFrom = [.. actualType.DamageRelations.HalfDamageFrom.Select(t => t.Name.ToUpperInvariant()), .. actualType.DamageRelations.NoDamageFrom.Select(t => t.Name.ToUpperInvariant())];
-            List<string> typeTwoIncreasedDamageFrom = [.. actualType.DamageRelations.DoubleDamageFrom.Select(t => t.Name.ToUpperInvariant())];
-
-            foreach (var typeName in typeOneReducedDamageFrom)
+            foreach (var typeName in actualType.DamageRelations.NoDamageFrom)
             {
-                typeTwoIncreasedDamageFrom.Remove(typeName);
-            }
+                var upperName = typeName.Name.ToUpperInvariant();
 
-            foreach (var typeName in typeTwoReducedDamageFrom)
-            {
-                DoubleDamageTypes.Remove(typeName);
-            }
-
-            foreach (var typeName in typeTwoIncreasedDamageFrom)
-            {
-                if (DoubleDamageTypes.Contains(typeName))
+                if (!ImmuneDamageTypes.Contains(upperName))
                 {
-                    DoubleDamageTypes.Remove(typeName);
-                    QuadDamageTypes.Add(typeName);
+                    ImmuneDamageTypes.Add(upperName);
                 }
-                else
+
+                //remove from all others
+                DoubleDamageTypes.Remove(upperName);
+                RegDamageTypes.Remove(upperName);
+                HalfDamageTypes.Remove(upperName);
+            }
+
+            foreach (var typeName in actualType.DamageRelations.HalfDamageFrom)
+            {
+                var upperName = typeName.Name.ToUpperInvariant();
+
+                if (DoubleDamageTypes.Contains(upperName))
                 {
-                    DoubleDamageTypes.Add(typeName);
+                    DoubleDamageTypes.Remove(upperName);
+                    RegDamageTypes.Add(upperName);
+                }
+                else if (RegDamageTypes.Contains(upperName))
+                {
+                    RegDamageTypes.Remove(upperName);
+                    HalfDamageTypes.Add(upperName);
+                }
+                else if (HalfDamageTypes.Contains(upperName))
+                {
+                    HalfDamageTypes.Remove(upperName);
+                    QuartDamageTypes.Add(upperName);
+                }
+            }
+
+            foreach (var typeName in actualType.DamageRelations.DoubleDamageFrom)
+            {
+                var upperName = typeName.Name.ToUpperInvariant();
+
+                if (DoubleDamageTypes.Contains(upperName))
+                {
+                    DoubleDamageTypes.Remove(upperName);
+                    QuadDamageTypes.Add(upperName);
+                }
+                else if (RegDamageTypes.Contains(upperName))
+                {
+                    RegDamageTypes.Remove(upperName);
+                    DoubleDamageTypes.Add(upperName);
+                }
+                else if (HalfDamageTypes.Contains(upperName))
+                {
+                    HalfDamageTypes.Remove(upperName);
+                    RegDamageTypes.Add(upperName);
                 }
             }
         }
