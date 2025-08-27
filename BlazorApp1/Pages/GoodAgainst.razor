@@ -35,10 +35,9 @@
     .container {
         display: grid;
         grid-template-areas:
-            "pic buttons"
-            "name name"
             "types types"
-            "guesses guesses";
+            "guesses guesses"
+            "pic buttons";
         grid-template-columns: 3fr 1fr;
         gap: 5px;
         background-color: white;
@@ -114,77 +113,12 @@
 </style>
 
 <div class="container">
-    <div class="pic">
-        @if (QuadDamageTypes?.Any() == true)
-        {
-            <div>4x damage from:</div>
-            @foreach (var t in QuadDamageTypes)
-            {
-                <div class="type" style="@GetTypeStyle(t)">@t</div>
-            }
-        }
-
-        @if (DoubleDamageTypes?.Any() == true)
-        {
-            <div>2x damage from:</div>
-            @foreach (var t in DoubleDamageTypes)
-            {
-                <div class="type" style="@GetTypeStyle(t)">@t</div>
-            }
-        }
-
-        @if (RegDamageTypes?.Any() == true)
-        {
-            <div>1x damage from:</div>
-            @foreach (var t in RegDamageTypes)
-            {
-                <div class="type" style="@GetTypeStyle(t)">@t</div>
-            }
-        }
-
-        @if (HalfDamageTypes?.Any() == true)
-        {
-            <div>1/2 damage from:</div>
-            @foreach (var t in HalfDamageTypes)
-            {
-                <div class="type" style="@GetTypeStyle(t)">@t</div>
-            }
-        }
-
-        @if (QuartDamageTypes?.Any() == true)
-        {
-            <div>1/4 damage from:</div>
-            @foreach (var t in QuartDamageTypes)
-            {
-                <div class="type" style="@GetTypeStyle(t)">@t</div>
-            }
-        }
-
-        @if (ImmuneDamageTypes?.Any() == true)
-        {
-            <div>0x damage from:</div>
-            @foreach (var t in ImmuneDamageTypes)
-            {
-                <div class="type" style="@GetTypeStyle(t)">@t</div>
-            }
-        }
-    </div>
-    <div class="buttons">
-        <button class="buttonClass" disabled="@GetClearButtonDisabled()" @onclick="@(() => Clear())">
-            Clear
-        </button>
-    </div>
     <div class="types">
         <div class="typesContainer">
-            @if (SelectedPokemonType1 is not null)
-            {
-                <div class="type1" style="background-color:@TypeColorDictionary[@SelectedPokemonType1]">@SelectedPokemonType1</div>
-            }
-                
-            @if(SelectedPokemonType2 is not null)
-            {
-                <div class="type2" style="background-color:@TypeColorDictionary[@SelectedPokemonType2]">@SelectedPokemonType2</div>
-            }
+            <div class="type1" style="@GetPotentiallyBlankTypeStyle(@SelectedPokemonType1)">@GetPotentiallyBlankTypeName(@SelectedPokemonType1, true)</div>
+            
+
+            <div class="type2" style="@GetPotentiallyBlankTypeStyle(@SelectedPokemonType2)">@GetPotentiallyBlankTypeName(@SelectedPokemonType2, false)</div>
         </div>
     </div>
     <div class="guesses">
@@ -210,6 +144,66 @@
                 <div class="div-table-col" align="center" disabled="@GetTypeButtonDisabled()" style="@GetTypeStyleForGuessing("WATER")" onclick="@(() => GuessType("WATER"))">WATER</div>
             </div>
         </div>
+    </div>
+    <div class="buttons">
+        <button class="buttonClass" disabled="@GetClearButtonDisabled()" @onclick="@(() => Clear())">
+            Clear
+        </button>
+    </div>
+    <div class="pic">
+        @if (QuadDamageTypes?.Any() == true)
+        {
+            <div>4x damage from:</div>
+            @foreach (var t in QuadDamageTypes)
+            {
+                <div style="@GetTypeStyle(t)">@t</div>
+            }
+        }
+
+        @if (DoubleDamageTypes?.Any() == true)
+        {
+            <div>2x damage from:</div>
+            @foreach (var t in DoubleDamageTypes)
+            {
+                <div style="@GetTypeStyle(t)">@t</div>
+            }
+        }
+
+        @if (RegDamageTypes?.Any() == true)
+        {
+            <div>1x damage from:</div>
+            @foreach (var t in RegDamageTypes)
+            {
+                <div style="@GetTypeStyle(t)">@t</div>
+            }
+        }
+
+        @if (HalfDamageTypes?.Any() == true)
+        {
+            <div>1/2 damage from:</div>
+            @foreach (var t in HalfDamageTypes)
+            {
+                <div style="@GetTypeStyle(t)">@t</div>
+            }
+        }
+
+        @if (QuartDamageTypes?.Any() == true)
+        {
+            <div>1/4 damage from:</div>
+            @foreach (var t in QuartDamageTypes)
+            {
+                <div style="@GetTypeStyle(t)">@t</div>
+            }
+        }
+
+        @if (ImmuneDamageTypes?.Any() == true)
+        {
+            <div>0x damage from:</div>
+            @foreach (var t in ImmuneDamageTypes)
+            {
+                <div style="@GetTypeStyle(t)">@t</div>
+            }
+        }
     </div>
 </div>
 
@@ -379,9 +373,30 @@
         }
     }
 
+    private string GetPotentiallyBlankTypeName(string? type, bool type1)
+    {
+        if (string.IsNullOrWhiteSpace(type))
+        {
+            string t = type1 ? "1" : "2";
+            return $"Type {t}";
+        }
+
+        return type;
+    }
+
+    private string GetPotentiallyBlankTypeStyle(string? type)
+    {
+        if(string.IsNullOrWhiteSpace(type))
+        {
+            return "background-color: White; color: Black";
+        }
+
+        return $"background-color: {TypeColorDictionary[type]}; color White";
+    }
+
     private string GetTypeStyle(string type)
     {
-        return $"background-color: {TypeColorDictionary[type]}";
+        return $"background-color: {TypeColorDictionary[type]}; color White";
     }
 
     private string GetTypeStyleForGuessing(string type)
